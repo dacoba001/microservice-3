@@ -50,6 +50,10 @@ class PedidosController extends Controller
 
         foreach ($users as $user)
         {
+            $pedidos = Pedido::with(['cliente.user', 'productos'])
+                ->where('ped_fecha_ini','>=', $request['start_date'])
+                ->where('ped_fecha_ini','<=',$request['end_date'].' 23:59:59')
+                ->orderBy('ped_fecha_ini', 'asc');
             $pedidos_user = $pedidos->where('user_id', $user->id)->get();
             $user['cant_pedidos'] = $pedidos_user->count();
             $user['cant_productos'] = $pedidos_user->pluck('productos')->collapse()->sum('ped_cantidad');
